@@ -8,42 +8,51 @@ const notes = require("../db/db.json");
 const router = express.Router();
 
 // gets the initial index.html file
-router.get("/",(request,response)=>{
-    response.sendFile(path.join(__dirname,"../public/index.html"))
+router.get("/",(request,res)=>{
+    res.sendFile(path.join(__dirname,"../public/index.html"))
  });
  
 // from UI on click directs to node.html file
-router.get("/notes",(request,response)=>{
-   response.sendFile(path.join(__dirname,"../public/notes.html"))
+router.get("/notes",(request,res)=>{
+   res.sendFile(path.join(__dirname,"../public/notes.html"))
 });
 
 // is getting the entry from json file to display
-router.get("/api/notes", (request,response) => {
-    response.json(notes);
+router.get("/api/notes", (request,res) => {
+
+    sql.readFromTable("notes", (err,data) => {
+        if (err) {
+            
+        }
+    })
+    fs.readFile("./db/db.json", "utf-8", (err, data) => {
+        // convert to json
+        const notesArray = JSON.parse(data);
+        res.json(notesArray);
+    });
 });
 
 // /api/notes had GET method in UI for fetching the data from html
-router.post("/api/notes", (request,response) => {
+router.post("/api/notes", (req,res) => {
     const note = {
         id: uuid.v4(),
-        title: request.body.title,
-        text: request.body.text
+        title: req.body.title,
+        text: req.body.text
     };
+    
     fs.readFile("./db/db.json", "utf-8", (err, data) => {
         // convert to json
         const notesArray = JSON.parse(data);
         notesArray.push(note);
 
         fs.writeFile("./db/db.json",JSON.stringify(notesArray,null,4),(err)=>{
-            if(err){
-                return response.status(500).json({msg:"error writing db"})
+            if (err){
+                return res.status(500).json({msg:"error writing db"})
             } else {
-                return response.json(notesArray);
+                return res.json(notesArray);
             }
            })
     });
-   
-    response.send("Success!");
 });
 
 router.get('/api/notes/:id', function(req, res) {
@@ -55,6 +64,7 @@ router.delete('/api/notes/:id', function(req, res) {
     updateNotes(notes);
     res.json(notes);
 })
+
 function updateNotes(notes) {
     fs.writeFile('db/db.json', JSON.stringify(notes, '\t'), function(err) {
         if (err) throw err;
