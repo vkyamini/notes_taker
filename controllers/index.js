@@ -19,12 +19,6 @@ router.get("/notes",(request,res)=>{
 
 // is getting the entry from json file to display
 router.get("/api/notes", (request,res) => {
-
-    sql.readFromTable("notes", (err,data) => {
-        if (err) {
-            
-        }
-    })
     fs.readFile("./db/db.json", "utf-8", (err, data) => {
         // convert to json
         const notesArray = JSON.parse(data);
