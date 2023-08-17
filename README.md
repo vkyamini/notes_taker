@@ -1,6 +1,6 @@
 # Notes Taker
 
-[Link](https://addnotes.herokuapp.com/)
+[Website Link](https://addnotes.herokuapp.com/)
 
 Front-end easy to use web APP to store all your notes for future references.
   
